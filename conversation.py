@@ -15,11 +15,15 @@ class Conversation(BaseModel):
     def get_recent_messages(self, n: int = 5) -> List[ChatMessage]:
         return self.messages[-n:]
     
-    def make_egocentric(self, name):
-        # TODO: Make sure this is a copy of the object
+    def format_messages_for_openai(self, name: str):
+        formatted_messages = []
         for message in self.messages:
             if message.speaker == name:
-                message.speaker = "system"
+                role = "system"
             else:
-                message.speaker = "user"
-        return self
+                role = "user"
+            formatted_messages.append({
+                "role": role,
+                "content": f"{message.speaker}: {message.message}"
+            })
+        return formatted_messages

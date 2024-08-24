@@ -22,19 +22,12 @@ class Agent:
 
     def generate_response(self, conversation_history: Conversation, topic: str) -> str:
         # Base implementation - should be overridden in subclasses
-        import pdb; pdb.set_trace()
         completion = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                {
-                "role": "user",
-                "content": "Say this is a test",
-                },
-            ],
+            messages=conversation_history.format_messages_for_openai(self.name)
             )
         print(completion.choices[0].message.content)
-        # raise NotImplementedError("This method should be implemented in subclasses")
-
+        import pdb; pdb.set_trace()
 
 class Mediator(Agent):
     def __init__(self, model: Any):
