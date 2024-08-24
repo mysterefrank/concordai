@@ -3,12 +3,13 @@ import random
 from conversation import Conversation, ChatMessage
 
 class SimulationEnvironment:
-    def __init__(self, topic: str, agents: List[Any], mediator: Any):
+    def __init__(self, topic: str, agents: List[Any], mediator: Any, system_prompt: str = ""):
         self.topic = topic
         self.agents = agents
         self.mediator = mediator
         self.conversation_history = Conversation(topic=topic)
         self.current_speaker = None
+        self.system_prompt = system_prompt
 
     def _get_bids(self) -> List[Dict[str, Any]]:
         bids = []
@@ -48,9 +49,9 @@ class SimulationEnvironment:
         self.current_speaker = self._select_next_speaker(bids)
         
         if self.current_speaker == self.mediator:
-            message = self.mediator.generate_response(self.conversation_history, self.topic)
+            message = self.mediator.generate_response(self.conversation_history, self.topic, self.system_prompt)
         else:
-            message = self.current_speaker.generate_response(self.conversation_history, self.topic)
+            message = self.current_speaker.generate_response(self.conversation_history, self.topic, self.system_prompt)
 
         turn = ChatMessage(message=str(message), speaker=self.current_speaker.name)
         self.conversation_history.add_message(turn)
