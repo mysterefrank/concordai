@@ -15,8 +15,8 @@ class Conversation(BaseModel):
     def get_recent_messages(self, n: int = 5) -> List[ChatMessage]:
         return self.messages[-n:]
     
-    def format_messages_for_openai(self, name: str):
-        formatted_messages = []
+    def format_messages_for_openai(self, name: str, system_prompt: str):
+        formatted_messages = [{"role": "system", "content": system_prompt}]
         for message in self.messages:
             if message.speaker == name:
                 role = "system"

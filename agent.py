@@ -5,9 +5,9 @@ import os
 from conversation import Conversation, ChatMessage
 
 class Agent:
-    def __init__(self, name: str, model: Any):
+    def __init__(self, name: str,  personality_prompt: str, model: Any = "meta-llama/llama-3.1-8b-instruct:free"):
         self.name = name
-        self.personality_prompt = None
+        self.personality_prompt = personality_prompt
         self.model = model
         self.client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
@@ -24,23 +24,10 @@ class Agent:
         # Base implementation - should be overridden in subclasses
         completion = self.client.chat.completions.create(
             model=self.model,
-            messages=conversation_history.format_messages_for_openai(self.name)
+            messages=conversation_history.format_messages_for_openai(self.name, self.personality_prompt)
             )
-        print(completion.choices[0].message.content)
-        import pdb; pdb.set_trace()
+        return completion.choices[0].message.content
 
 class Mediator(Agent):
-    def __init__(self, model: Any):
-        super().__init__("Friendly Mediator", model)
-
-    def calculate_bid(self, conversation_history: Conversation, topic: str) -> Tuple[float, float]:
-        # Mediator-specific bidding logic
-        # This could be based on detecting need for intervention, conversation flow, etc.
-        relevance = random.uniform(0, 1)  # Mediator might have a higher base relevance
-        confidence = random.uniform(0, 1)  # Mediator might be generally more confident
-        return relevance, confidence
-
-    def generate_response(self, conversation_history: Conversation, topic: str) -> str:
-        # Implement mediator-specific response generation logic
-        # This could focus on guiding the conversation, finding common ground, etc.
-        pass
+    def __init__(self, personality_prompt: str, model: Any = "meta-llama/llama-3.1-8b-instruct:free"):
+        super().__init__("Friendly Mediator", personality_prompt=personality_prompt, model=model)
