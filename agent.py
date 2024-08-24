@@ -15,13 +15,37 @@ class Agent:
         )
 
     def calculate_bid(self, conversation_history: Conversation, topic: str) -> Tuple[float, float]:
-        # Base implementation - can be overridden in subclasses
-        calculate_bid_prompt = """
-        
+        calculate_bid_prompt = f"""
+        You are {self.name}.
+
+        Given the conversation history and the current topic, evaluate how relevant and confident you feel about contributing to the conversation next.
+
+        Topic: {topic}
+        Recent conversation:
+        {conversation_history.get_recent_messages(5)}
+
+        Please respond with two numbers between 0 and 1, separated by a comma:
+        - The first number represents your relevance score (how relevant you feel your input would be)
+        - The second number represents your confidence score (how confident you are in providing valuable input)
+
+        For example: 0.8, 0.7
+
+        Relevance, Confidence:
         """
-        relevance = random.uniform(0, 1)
-        confidence = random.uniform(0, 1)
-        return relevance, confidence
+
+        completion = self.client.chat.completions.create(
+            model='gpt-4o-mini',
+            messages=[{"role": "user", "content": calculate_bid_prompt}]
+        )
+
+        response = completion.choices[0].message.content.strip()
+        print(response)
+        try:
+            relevance, confidence = map(float, response.split(','))
+            return min(max(relevance, 0), 1), min(max(confidence, 0), 1)
+        except ValueError:
+            # If parsing fails, return random values as a fallback
+            return random.uniform(0, 1), random.uniform(0, 1)
 
     def generate_response(self, conversation_history: Conversation, topic: str, system_prompt: str) -> str:
         # Base implementation - should be overridden in subclasses

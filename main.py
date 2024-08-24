@@ -28,8 +28,8 @@ def main():
         turn = env.step()
         print(f"{turn.speaker}: {turn.message}")
 
-    # Don't have a solid idea yet when the conversation ends.
-    # final_state = env.get_state()
-
+    # Don't have a solid idea yet when the conversation should end but for now it's after 50 turns.
+    final_state = env.get_state()
+    # This is when we'd evaluate consensus and from that get a reward signal for the mediator.
 if __name__ == "__main__":
     main()
