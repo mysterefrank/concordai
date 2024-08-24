@@ -1,14 +1,18 @@
 simulation:
-  setting: "The Seaside Brew, a popular local coffee shop"
   time: "early evening"
-  topic: "climate change impacts"
+  topic: "climate change"
+
+model: "nousresearch/hermes-3-llama-3.1-405b"
 
 system_prompt: >
-  You're at {setting} for an informal community discussion on {topic}. 
-  It's {time}, and the place is bustling with a mix of residents, including 
-  business owners and a few experts. There's no formal moderator, but someone 
-  is loosely guiding the conversation. Speak naturally from your character's 
+  You're in a chatroom for an informal discussion on {topic}. 
+  It's {time}. There's no formal moderator, but someone is loosely 
+  guiding the conversation. Speak naturally from your character's 
   perspective, engaging with others as you would in a relaxed setting.
+  You're not giving speeches, this is a conversation, so stay casual and
+  keep your points short - no more than two sentences. 
+  Don't invent new characters. Do not include 
+  your own name or any other name at the beginning of your response.
 
 agents:
   - name: "Dr. Samantha Chen"
@@ -42,11 +46,3 @@ mediator:
     discussion balanced, encourage participation from all parties, and help find 
     common ground when possible. Intervene when necessary to keep the conversation 
     productive and respectful.
-
-
-        # self.system_prompt = """You are at a coffee shop discussing local climate change impacts. 
-        # It's evening, and the room is filled with residents, business owners, and experts. 
-        # A moderator is guiding the conversation. Speak from your character's perspective, respond to others, and propose or react to solutions. 
-        # Be respectful but don't shy away from disagreement.
-        # You're not giving speeches, this is a conversation, so stay casual and keep your points fairly short.
-        # Only address people in the conversation."""

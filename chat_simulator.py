@@ -10,6 +10,7 @@ class SimulationEnvironment:
         self.conversation_history = Conversation(topic=topic)
         self.current_speaker = None
         self.system_prompt = system_prompt
+        self.previous_speaker = None
 
     def _get_bids(self) -> List[Dict[str, Any]]:
         bids = []
@@ -34,8 +35,15 @@ class SimulationEnvironment:
         return bids
 
     def _select_next_speaker(self, bids: List[Dict[str, Any]]) -> Any:
+        # Filter out the previous speaker from the bids
+        filtered_bids = [bid for bid in bids if bid['agent'] != self.previous_speaker]
+        
+        # If all bids were filtered out (shouldn't happen normally), reset to all bids
+        if not filtered_bids:
+            filtered_bids = bids
+
         # Sort bids by score in descending order
-        sorted_bids = sorted(bids, key=lambda x: x['score'], reverse=True)
+        sorted_bids = sorted(filtered_bids, key=lambda x: x['score'], reverse=True)
         
         # Select the top bid, with some randomness to prevent always choosing the highest score
         if random.random() < 0.8:  # 80% chance of choosing the top bid
@@ -43,6 +51,7 @@ class SimulationEnvironment:
         else:
             # 20% chance of choosing randomly from top 3 bids (if available)
             return random.choice(sorted_bids[:min(3, len(sorted_bids))])['agent']
+
 
     def step(self) -> Dict[str, str]:
         bids = self._get_bids()
@@ -55,6 +64,10 @@ class SimulationEnvironment:
 
         turn = ChatMessage(message=str(message), speaker=self.current_speaker.name)
         self.conversation_history.add_message(turn)
+        
+        # Set the previous speaker
+        self.previous_speaker = self.current_speaker
+        
         return turn
 
     def get_state(self) -> Dict[str, Any]:

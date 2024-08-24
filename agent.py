@@ -29,8 +29,16 @@ class Agent:
             model=self.model,
             messages=conversation_history.format_messages_for_openai(self.name, system_prompt + self.personality_prompt)
             )
-        return completion.choices[0].message.content
+        
+        response = completion.choices[0].message.content
+
+        # Remove the agent's name if it appears at the start of the response
+        if response.lower().startswith(self.name.lower()):
+            response = response[len(self.name):].lstrip(': ')
+
+        return response
 
 class Mediator(Agent):
+    # Note: This is a different class because we'll later have a bunch of training logic for it.
     def __init__(self, personality_prompt: str, model: Any = "meta-llama/llama-3.1-8b-instruct:free"):
         super().__init__("Friendly Mediator", personality_prompt=personality_prompt, model=model)
