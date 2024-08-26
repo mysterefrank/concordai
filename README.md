@@ -7,7 +7,7 @@ add set an "OPENROUTER_API_KEY" environment variable.
 pip install -r requirements.txt
 
 ## Customization
-You can customize the simulation by modifying the agent profiles in `main.py`
+You can customize the simulation by modifying the agent profiles in the config.
 
 ## Run
 python main.py
